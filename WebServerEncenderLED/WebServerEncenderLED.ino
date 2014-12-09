@@ -28,7 +28,7 @@ byte mac[] = { 0x90, 0xA2, 0xDA, 0x00, 0xFE, 0x0E };
 // Para obtener IP DhcpPrinter
 IPAddress ip(172,20,1,157); //<<< ENTER YOUR IP ADDRESS HERE!!!
 
-//Inicializa la servidosr con el puerto 80
+//Inicializa la biblioteca Ethernet servidor con el puerto 80
 EthernetServer server(80);
 
 void setup()
@@ -39,12 +39,12 @@ void setup()
   start the Ethernet connection and the server:
   Ethernet.begin(mac, ip);
   server.begin();
-  Serial.begin(9600);
+  Serial.begin(9600);     // Abre el puerto Serie
 }
 
 void loop()
 {
-  // Esscucha de nuevas peticiones de clientes
+  // Escucha de nuevas peticiones de clientes
   EthernetClient client = server.available();  //Creamos un cliente Web
   //Cuando detecte un cliente a través de una petición HTTP
   if (client) {
