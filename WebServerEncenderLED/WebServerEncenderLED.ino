@@ -1,4 +1,5 @@
 /*
+/*
   Web Server Demo
   thrown together by Randy Sarafan
  
@@ -20,23 +21,22 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-boolean incoming = 0;
+boolean incoming = 0;   // Variable que nos dice si recibimos datos
 
-// Enter a MAC address and IP address for your controller below.
-// The IP address will be dependent on your local network:
+// Introduce una direccion MAC e IP para tu ethernet Shield 
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x00, 0xFE, 0x0E };
+// Para obtener IP DhcpPrinter
 IPAddress ip(172,20,1,157); //<<< ENTER YOUR IP ADDRESS HERE!!!
 
-// Initialize the Ethernet server library
-// with the IP address and port you want to use 
-// (port 80 is default for HTTP):
+//Inicializa la servidosr con el puerto 80
 EthernetServer server(80);
 
 void setup()
 {
-  pinMode(2, OUTPUT);
+  pinMode(2, OUTPUT);   // Conectamos el LED al pin2D
 
-  // start the Ethernet connection and the server:
+  // Empieza la conexión Ethernet y el servidor
+  start the Ethernet connection and the server:
   Ethernet.begin(mac, ip);
   server.begin();
   Serial.begin(9600);
@@ -44,19 +44,20 @@ void setup()
 
 void loop()
 {
-  // listen for incoming clients
-  EthernetClient client = server.available();
+  // Esscucha de nuevas peticiones de clientes
+  EthernetClient client = server.available();  //Creamos un cliente Web
+  //Cuando detecte un cliente a través de una petición HTTP
   if (client) {
-    // an http request ends with a blank line
+    //  Una peticion http finaliza con una linea en blanco
     boolean currentLineIsBlank = true;
     while (client.connected()) {
       if (client.available()) {
-        char c = client.read();
-        // if you've gotten to the end of the line (received a newline
-        // character) and the line is blank, the http request has ended,
-        // so you can send a reply
+        char c = client.read();  //Leemos la petición HTTP carácter por carácter
+        Serial.write(c);//Visualizamos la petición HTTP por el Monitor Serial
         
-        //reads URL string from $ to first blank space
+        // Si recibimos un final de linea y la nueva es blank
+        // La peticion http ha finalizado y podemos enviar una respuesta
+        // Leemos la cadena URL desde $ hasta espacio en blanco
         if(incoming && c == ' '){ 
           incoming = 0;
         }
@@ -64,7 +65,7 @@ void loop()
           incoming = 1; 
         }
         
-        //Checks for the URL string $1 or $2
+        //Revisa si el caracter es 1 o 2
         if(incoming == 1){
           Serial.println(c);
           
@@ -78,20 +79,22 @@ void loop()
           }
         
         }
-
+        // Si el caracter es '/n' estas empezando una linea nueva
         if (c == '\n') {
-          // you're starting a new line
           currentLineIsBlank = true;
         } 
+        // Y si es es distinto de r es que tienes un caracter
         else if (c != '\r') {
           // you've gotten a character on the current line
           currentLineIsBlank = false;
         }
       }
     }
-    // give the web browser time to receive the data
+    // Da tiempo al navegador par recibir los datos 
     delay(1);
-    // close the connection:
+    // Cierra la conexion
     client.stop();
   }
 }
+
+
