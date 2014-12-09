@@ -17,14 +17,15 @@
  
  */
 
+// Pines que vamos a usar
 int ldrPin=A0;    // Pin al que conectamos LDR
 int lm35Pin=A1;   // Pin al que conectamos LM35
 
+// Valores de los sensores
 int ldrValue=0;    // Valor LDR
 int lm35Value=0;     // Valor LM35
 
 int temperatura;
-
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -35,7 +36,6 @@ byte mac[] = {
   0x90, 0xA2, 0xDA, 0x00, 0xFE, 0x0E
    };
 IPAddress ip(172,20,1,157);
-
 
 // Initialize the Ethernet server library
 // with the IP address and port you want to use 
@@ -48,7 +48,6 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
-
 
   // start the Ethernet connection and the server:
   Ethernet.begin(mac, ip);
@@ -81,18 +80,18 @@ void loop() {
           client.println();
           client.println("<!DOCTYPE HTML>");
           client.println("<html>");
+         
           // output the value of each analog input pin
-
-            ldrValue=analogRead(ldrPin);
+          ldrValue=analogRead(ldrPin);
           lm35Value=analogRead(lm35Pin);
           temperatura= lm35Value*500/1024;    // Convertimos 10mv/ºC en una escala de 2xy 10 bits
-          // Si el valor de la ldr es mayor decir que es de dia
+         
+          // Si el valor de la ldr es menor que 200 decir que es de noche
           if (ldrValue<200){
-
             client.print("Es de noche ");
             client.println("<br />"); 
           }
-          // Sino de noche
+          // Sino de dia
           else{
             client.print("Es de dia ");
             client.println("<br />"); 
