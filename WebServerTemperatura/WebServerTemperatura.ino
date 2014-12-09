@@ -30,26 +30,23 @@ int temperatura;
 #include <SPI.h>
 #include <Ethernet.h>
 
-// Enter a MAC address and IP address for your controller below.
-// The IP address will be dependent on your local network:
+// Introduce una direccion MAC e IP para tu ethernet Shield 
 byte mac[] = { 
   0x90, 0xA2, 0xDA, 0x00, 0xFE, 0x0E
    };
 IPAddress ip(172,20,1,157);
 
-// Initialize the Ethernet server library
-// with the IP address and port you want to use 
-// (port 80 is default for HTTP):
+//Inicializa la biblioteca Ethernet servidor con el puerto 80
 EthernetServer server(80);
 
 void setup() {
-  // Open serial communications and wait for port to open:
+  // Abre la comunicacion serie y espera 
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
 
-  // start the Ethernet connection and the server:
+  // Empieza la conexión Ethernet y el servidor
   Ethernet.begin(mac, ip);
   server.begin();
   Serial.print("server is at ");
@@ -58,21 +55,22 @@ void setup() {
 
 
 void loop() {
-  // listen for incoming clients
+  // Escucha de nuevas peticiones de clientes
   EthernetClient client = server.available();
   if (client) {
     Serial.println("new client");
-    // an http request ends with a blank line
+    //  Una peticion http finaliza con una linea en blanco
     boolean currentLineIsBlank = true;
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
         Serial.write(c);
-        // if you've gotten to the end of the line (received a newline
-        // character) and the line is blank, the http request has ended,
-        // so you can send a reply
+        
+        // Si recibimos un final de linea y la nueva es blank
+        // La peticion http ha finalizado y podemos enviar una respuesta
+        // Leemos la cadena URL desde $ hasta espacio en blanco
         if (c == '\n' && currentLineIsBlank) {
-          // send a standard http response header
+          // Envia un enacbezado de respuesta estandar
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
           client.println("Connection: close");  // the connection will be closed after completion of the response
@@ -81,7 +79,7 @@ void loop() {
           client.println("<!DOCTYPE HTML>");
           client.println("<html>");
          
-          // output the value of each analog input pin
+          // Lectura de valores de los pines analógicos
           ldrValue=analogRead(ldrPin);
           lm35Value=analogRead(lm35Pin);
           temperatura= lm35Value*500/1024;    // Convertimos 10mv/ºC en una escala de 2xy 10 bits
@@ -104,24 +102,21 @@ void loop() {
           client.print("Temperatura=");
           client.print(temperatura);
           client.println("<br />"); 
-
           client.println("</html>");
           break;
         }
+        // Si el caracter es '/n' estas empezando una linea nueva
         if (c == '\n') {
-          // you're starting a new line
           currentLineIsBlank = true;
         } 
+        // you've gotten a character on the current line
         else if (c != '\r') {
-          // you've gotten a character on the current line
           currentLineIsBlank = false;
         }
       }
     }
-    // give the web browser time to receive the data
-    delay(1);
-    // close the connection:
-    client.stop();
+    delay(1);      // Da tiempo al navegador par recibir los datos 
+    client.stop();      // Cierra la conexion
     Serial.println("client disonnected");
   }
 }
