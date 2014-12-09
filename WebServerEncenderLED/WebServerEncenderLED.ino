@@ -11,19 +11,9 @@
  http://your-IP-address/$2
  
  Circuit:
- * Ethernet shield attached to pins 10, 11, 12, 13
  * Connect an LED to pin D2 and put it in series with a 220 ohm resistor to ground
  
  Based almost entirely upon Web Server by Tom Igoe and David Mellis
- 
- Edit history: 192,168,1,17
- created 18 Dec 2009
- by David A. Mellis
- modified 4 Sep 2010
- by Tom Igoe
- 
-  172.20.1.157.
-
  
  */
 
